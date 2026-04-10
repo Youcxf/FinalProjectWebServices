@@ -1,11 +1,6 @@
 spring:
   application:
     name: FinalProjectWebServices
-  profiles:
-    default: normal
-    group:
-      normal:
-        - h2
   jpa:
     hibernate:
       ddl-auto: validate
