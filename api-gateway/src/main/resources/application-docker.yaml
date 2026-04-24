@@ -1,0 +1,9 @@
+services:
+  member-service:
+    url: ${MEMBER_SERVICE_URL:http://member-service:8081}
+  catalog-service:
+    url: ${CATALOG_SERVICE_URL:http://catalog-service:8082}
+  borrowing-service:
+    url: ${BORROWING_SERVICE_URL:http://borrowing-service:8083}
+  orchestrator:
+    url: ${LIBRARY_ORCHESTRATOR_URL:http://library-orchestrator:8084}

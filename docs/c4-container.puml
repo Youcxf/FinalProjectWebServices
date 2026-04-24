@@ -1,0 +1,35 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(student, "Student / Evaluator")
+System_Boundary(system, "Library Microservices System") {
+    Container(gateway, "API Gateway", "Spring Cloud Gateway", "Single entry point and route exposure.")
+    Container(orchestrator, "Library Orchestrator", "Spring Boot", "HATEOAS data aggregator with Ports and ACL adapters.")
+    Container(member, "Member Service", "Spring Boot", "CRUD for library members.")
+    Container(catalog, "Catalog Service", "Spring Boot", "CRUD for books and availability.")
+    Container(borrowing, "Borrowing Service", "Spring Boot", "CRUD for loan records.")
+
+    ContainerDb(orchestratorDb, "Orchestrator DB", "PostgreSQL / H2", "Stores borrowing decisions.")
+    ContainerDb(memberDb, "Member DB", "PostgreSQL / H2", "Stores members.")
+    ContainerDb(catalogDb, "Catalog DB", "PostgreSQL / H2", "Stores books.")
+    ContainerDb(borrowingDb, "Borrowing DB", "PostgreSQL / H2", "Stores loans.")
+}
+
+Rel(student, gateway, "Calls REST APIs", "HTTP")
+Rel(gateway, orchestrator, "Routes requests")
+Rel(gateway, member, "Routes requests")
+Rel(gateway, catalog, "Routes requests")
+Rel(gateway, borrowing, "Routes requests")
+
+Rel(orchestrator, member, "MemberLookupPort / ACL")
+Rel(orchestrator, catalog, "BookCatalogPort / ACL")
+Rel(orchestrator, borrowing, "LoanManagementPort / ACL")
+
+Rel(orchestrator, orchestratorDb, "Reads / writes")
+Rel(member, memberDb, "Reads / writes")
+Rel(catalog, catalogDb, "Reads / writes")
+Rel(borrowing, borrowingDb, "Reads / writes")
+
+@enduml

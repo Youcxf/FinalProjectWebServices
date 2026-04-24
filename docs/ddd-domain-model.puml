@@ -1,0 +1,45 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+class Member {
+  +id: UUID
+  +name: String
+  +email: String
+  +status: MemberStatus
+  +outstandingFees: BigDecimal
+}
+
+class Book {
+  +id: UUID
+  +title: String
+  +author: String
+  +status: BookStatus
+  +availableCopies: int
+}
+
+class Loan {
+  +id: UUID
+  +memberId: UUID
+  +bookId: UUID
+  +quantity: int
+  +startDate: LocalDate
+  +dueDate: LocalDate
+  +status: LoanStatus
+}
+
+class BorrowingDecision {
+  +id: UUID
+  +memberId: UUID
+  +bookId: UUID
+  +quantity: int
+  +status: BorrowingDecisionStatus
+  +decisionReason: String
+  +loanId: UUID
+}
+
+BorrowingDecision ..> Member : validates
+BorrowingDecision ..> Book : checks availability
+BorrowingDecision ..> Loan : creates / updates
+
+@enduml

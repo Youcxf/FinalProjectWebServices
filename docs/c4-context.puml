@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_TOP_DOWN()
+
+Person(student, "Student / Evaluator", "Tests the REST APIs, Swagger UIs, and Docker deployment.")
+System(system, "Library Microservices System", "Gateway, orchestrator, and three supporting Spring Boot services.")
+
+Rel(student, system, "Uses", "HTTP / JSON")
+
+System_Ext(h2, "H2", "Local development databases")
+System_Ext(postgres, "PostgreSQL", "Per-service production databases in Docker")
+
+Rel(system, h2, "Uses during IntelliJ testing")
+Rel(system, postgres, "Uses in Docker Compose")
+
+@enduml
