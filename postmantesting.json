@@ -1,32 +1,244 @@
 {
   "info": {
-    "_postman_id": "3c3b6c55-b5bf-45d3-8bf2-2ebf36542001",
-    "name": "Final Project Web Services - Milestone Part 1",
+    "_postman_id": "f09c6b86-324b-4e86-b03d-26c7d3f9c8a5",
+    "name": "FinalProjectWebServices Verified Collection",
+    "description": "Rerunnable collection for the gateway and four services. It covers success paths, expected failures, and cleanup using dynamic test data so the full run can pass end-to-end.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "gatewayUrl", "value": "http://localhost:8080" },
-    { "key": "memberServiceUrl", "value": "http://localhost:8081" },
-    { "key": "catalogServiceUrl", "value": "http://localhost:8082" },
-    { "key": "borrowingServiceUrl", "value": "http://localhost:8083" },
-    { "key": "orchestratorUrl", "value": "http://localhost:8084" },
-    { "key": "memberId", "value": "11111111-1111-1111-1111-111111111111" },
-    { "key": "suspendedMemberId", "value": "22222222-2222-2222-2222-222222222222" },
-    { "key": "bookId", "value": "33333333-3333-3333-3333-333333333331" },
-    { "key": "reservedBookId", "value": "33333333-3333-3333-3333-333333333333" },
-    { "key": "loanId", "value": "55555555-5555-5555-5555-555555555551" },
-    { "key": "decisionId", "value": "77777777-7777-7777-7777-777777777771" },
-    { "key": "missingId", "value": "99999999-9999-9999-9999-999999999999" }
+    {
+      "key": "gatewayUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "memberServiceUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "catalogServiceUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "borrowingServiceUrl",
+      "value": "http://localhost:8083"
+    },
+    {
+      "key": "orchestratorUrl",
+      "value": "http://localhost:8084"
+    },
+    {
+      "key": "activeMemberId",
+      "value": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+      "key": "suspendedMemberId",
+      "value": "22222222-2222-2222-2222-222222222222"
+    },
+    {
+      "key": "availableBookId",
+      "value": "33333333-3333-3333-3333-333333333331"
+    },
+    {
+      "key": "secondAvailableBookId",
+      "value": "33333333-3333-3333-3333-333333333332"
+    },
+    {
+      "key": "reservedBookId",
+      "value": "33333333-3333-3333-3333-333333333333"
+    },
+    {
+      "key": "seededLoanId",
+      "value": "55555555-5555-5555-5555-555555555551"
+    },
+    {
+      "key": "seededDecisionId",
+      "value": "77777777-7777-7777-7777-777777777771"
+    },
+    {
+      "key": "missingId",
+      "value": "99999999-9999-9999-9999-999999999999"
+    },
+    {
+      "key": "runId",
+      "value": ""
+    },
+    {
+      "key": "dynamicMemberName",
+      "value": ""
+    },
+    {
+      "key": "dynamicMemberEmail",
+      "value": ""
+    },
+    {
+      "key": "dynamicMemberUpdatedEmail",
+      "value": ""
+    },
+    {
+      "key": "dynamicBookTitle",
+      "value": ""
+    },
+    {
+      "key": "dynamicBookUpdatedTitle",
+      "value": ""
+    },
+    {
+      "key": "createdMemberId",
+      "value": ""
+    },
+    {
+      "key": "createdBookId",
+      "value": ""
+    },
+    {
+      "key": "createdLoanId",
+      "value": ""
+    },
+    {
+      "key": "createdDecisionId",
+      "value": ""
+    },
+    {
+      "key": "rejectedDecisionId",
+      "value": ""
+    },
+    {
+      "key": "createdDecisionLoanId",
+      "value": ""
+    }
   ],
   "item": [
     {
-      "name": "Gateway",
+      "name": "Gateway And Smoke",
       "item": [
         {
-          "name": "List Routes",
+          "name": "Bootstrap And List Routes",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const runId = Date.now().toString();",
+                  "pm.collectionVariables.set('runId', runId);",
+                  "pm.collectionVariables.set('dynamicMemberName', `Postman Member ${runId}`);",
+                  "pm.collectionVariables.set('dynamicMemberEmail', `postman.member.${runId}@example.com`);",
+                  "pm.collectionVariables.set('dynamicMemberUpdatedEmail', `postman.member.updated.${runId}@example.com`);",
+                  "pm.collectionVariables.set('dynamicBookTitle', `Postman Book ${runId}`);",
+                  "pm.collectionVariables.set('dynamicBookUpdatedTitle', `Postman Book Updated ${runId}`);",
+                  "['createdMemberId', 'createdBookId', 'createdLoanId', 'createdDecisionId', 'rejectedDecisionId', 'createdDecisionLoanId'].forEach((key) => pm.collectionVariables.unset(key));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Bootstrap And List Routes', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array').with.length(4);",
+                  "  pm.expect(json.map((route) => route.service)).to.include.members(['member-service', 'catalog-service', 'borrowing-service', 'library-orchestrator']);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "url": "{{gatewayUrl}}/api/v1/routes"
+          }
+        },
+        {
+          "name": "Direct Member Service Smoke",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Direct Member Service Smoke', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array');",
+                  "  pm.expect(json.length).to.be.at.least(2);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{memberServiceUrl}}/api/v1/members"
+          }
+        },
+        {
+          "name": "Direct Catalog Service Smoke",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Direct Catalog Service Smoke', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array');",
+                  "  pm.expect(json.length).to.be.at.least(3);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{catalogServiceUrl}}/api/v1/books"
+          }
+        },
+        {
+          "name": "Direct Borrowing Service Smoke",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Direct Borrowing Service Smoke', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array');",
+                  "  pm.expect(json.length).to.be.at.least(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{borrowingServiceUrl}}/api/v1/loans"
+          }
+        },
+        {
+          "name": "Direct Orchestrator Smoke",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Direct Orchestrator Smoke', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('_links');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{orchestratorUrl}}/api/v1/borrowing-decisions"
           }
         }
       ]
@@ -35,76 +247,237 @@
       "name": "Member Service",
       "item": [
         {
-          "name": "GET All Members",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/members" }
+          "name": "Get All Members Through Gateway",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get All Members Through Gateway', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array');",
+                  "  pm.expect(json.some((member) => member.id === pm.collectionVariables.get('activeMemberId'))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/members"
+          }
         },
         {
-          "name": "GET Member By Id",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/members/{{memberId}}" }
+          "name": "Get Seeded Member By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Seeded Member By Id', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('activeMemberId'));",
+                  "  pm.expect(json.status).to.eql('ACTIVE');",
+                  "  pm.expect(json.outstandingFees).to.eql(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/members/{{activeMemberId}}"
+          }
         },
         {
-          "name": "GET Missing Member",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/members/{{missingId}}" }
+          "name": "Get Missing Member",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Missing Member', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql(404);",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('missingId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/members/{{missingId}}"
+          }
         },
         {
-          "name": "POST Member Positive",
+          "name": "Create Member Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Member Success', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('ACTIVE');",
+                  "  pm.expect(json.email).to.eql(pm.collectionVariables.get('dynamicMemberEmail'));",
+                  "  pm.collectionVariables.set('createdMemberId', json.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Demo Member {{$guid}}\",\n  \"email\": \"{{$randomEmail}}\",\n  \"status\": \"ACTIVE\",\n  \"outstandingFees\": 0.00\n}"
+              "raw": "{\n  \"name\": \"{{dynamicMemberName}}\",\n  \"email\": \"{{dynamicMemberEmail}}\",\n  \"status\": \"ACTIVE\",\n  \"outstandingFees\": 0.00\n}"
             },
             "url": "{{gatewayUrl}}/members"
           }
         },
         {
-          "name": "POST Member Negative",
+          "name": "Create Member Duplicate Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Member Duplicate Email', function () {",
+                  "  pm.response.to.have.status(409);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('dynamicMemberEmail'));",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Broken Member\",\n  \"email\": \"bad-email\",\n  \"status\": \"ACTIVE\",\n  \"outstandingFees\": 10.00\n}"
+              "raw": "{\n  \"name\": \"Duplicate Member\",\n  \"email\": \"{{dynamicMemberEmail}}\",\n  \"status\": \"ACTIVE\",\n  \"outstandingFees\": 0.00\n}"
             },
             "url": "{{gatewayUrl}}/members"
           }
         },
         {
-          "name": "PUT Member Positive",
+          "name": "Create Member Invalid State",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Member Invalid State', function () {",
+                  "  pm.response.to.have.status(422);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('Suspended members must have outstanding fees.');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Alice Reader Updated\",\n  \"email\": \"alice.updated@example.com\",\n  \"status\": \"ACTIVE\",\n  \"outstandingFees\": 0.00\n}"
+              "raw": "{\n  \"name\": \"Broken Suspended Member\",\n  \"email\": \"suspended.{{runId}}@example.com\",\n  \"status\": \"SUSPENDED\",\n  \"outstandingFees\": 0.00\n}"
             },
-            "url": "{{gatewayUrl}}/members/{{memberId}}"
+            "url": "{{gatewayUrl}}/members"
           }
         },
         {
-          "name": "PUT Member Negative",
+          "name": "Update Created Member Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Created Member Success', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('createdMemberId'));",
+                  "  pm.expect(json.email).to.eql(pm.collectionVariables.get('dynamicMemberUpdatedEmail'));",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Bob Broken\",\n  \"email\": \"bob@example.com\",\n  \"status\": \"SUSPENDED\",\n  \"outstandingFees\": 0.00\n}"
+              "raw": "{\n  \"name\": \"{{dynamicMemberName}} Updated\",\n  \"email\": \"{{dynamicMemberUpdatedEmail}}\",\n  \"status\": \"ACTIVE\",\n  \"outstandingFees\": 0.00\n}"
             },
-            "url": "{{gatewayUrl}}/members/{{memberId}}"
+            "url": "{{gatewayUrl}}/members/{{createdMemberId}}"
           }
         },
         {
-          "name": "DELETE Member Positive",
-          "request": { "method": "DELETE", "url": "{{memberServiceUrl}}/api/v1/members/{{suspendedMemberId}}" }
-        },
-        {
-          "name": "DELETE Member Negative",
-          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/members/{{missingId}}" }
-        },
-        {
-          "name": "GET All Members Direct Service",
-          "request": { "method": "GET", "url": "{{memberServiceUrl}}/api/v1/members" }
+          "name": "Update Created Member Bad Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Created Member Bad Request', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('Active members cannot have outstanding fees.');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{dynamicMemberName}} Updated\",\n  \"email\": \"{{dynamicMemberUpdatedEmail}}\",\n  \"status\": \"ACTIVE\",\n  \"outstandingFees\": 5.00\n}"
+            },
+            "url": "{{gatewayUrl}}/members/{{createdMemberId}}"
+          }
         }
       ]
     },
@@ -112,76 +485,237 @@
       "name": "Catalog Service",
       "item": [
         {
-          "name": "GET All Books",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/books" }
+          "name": "Get All Books Through Gateway",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get All Books Through Gateway', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array');",
+                  "  pm.expect(json.some((book) => book.id === pm.collectionVariables.get('availableBookId'))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/books"
+          }
         },
         {
-          "name": "GET Book By Id",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/books/{{bookId}}" }
+          "name": "Get Seeded Book By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Seeded Book By Id', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('availableBookId'));",
+                  "  pm.expect(json.status).to.eql('AVAILABLE');",
+                  "  pm.expect(json.availableCopies).to.eql(3);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/books/{{availableBookId}}"
+          }
         },
         {
-          "name": "GET Missing Book",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/books/{{missingId}}" }
+          "name": "Get Missing Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Missing Book', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql(404);",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('missingId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/books/{{missingId}}"
+          }
         },
         {
-          "name": "POST Book Positive",
+          "name": "Create Book Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Book Success', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('AVAILABLE');",
+                  "  pm.expect(json.title).to.eql(pm.collectionVariables.get('dynamicBookTitle'));",
+                  "  pm.collectionVariables.set('createdBookId', json.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Distributed Systems {{$guid}}\",\n  \"author\": \"Demo Author\",\n  \"status\": \"AVAILABLE\",\n  \"availableCopies\": 2\n}"
+              "raw": "{\n  \"title\": \"{{dynamicBookTitle}}\",\n  \"author\": \"Postman Author\",\n  \"status\": \"AVAILABLE\",\n  \"availableCopies\": 2\n}"
             },
             "url": "{{gatewayUrl}}/books"
           }
         },
         {
-          "name": "POST Book Negative",
+          "name": "Create Book Duplicate Title",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Book Duplicate Title', function () {",
+                  "  pm.response.to.have.status(409);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('dynamicBookTitle'));",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Archived Broken\",\n  \"author\": \"Demo Author\",\n  \"status\": \"ARCHIVED\",\n  \"availableCopies\": 2\n}"
+              "raw": "{\n  \"title\": \"{{dynamicBookTitle}}\",\n  \"author\": \"Duplicate Author\",\n  \"status\": \"AVAILABLE\",\n  \"availableCopies\": 2\n}"
             },
             "url": "{{gatewayUrl}}/books"
           }
         },
         {
-          "name": "PUT Book Positive",
+          "name": "Create Book Invalid State",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Book Invalid State', function () {",
+                  "  pm.response.to.have.status(422);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('Available books must have at least one copy.');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Domain-Driven Design Distilled\",\n  \"author\": \"Vaughn Vernon\",\n  \"status\": \"AVAILABLE\",\n  \"availableCopies\": 5\n}"
+              "raw": "{\n  \"title\": \"Broken Book {{runId}}\",\n  \"author\": \"Broken Author\",\n  \"status\": \"AVAILABLE\",\n  \"availableCopies\": 0\n}"
             },
-            "url": "{{gatewayUrl}}/books/{{bookId}}"
+            "url": "{{gatewayUrl}}/books"
           }
         },
         {
-          "name": "PUT Book Negative",
+          "name": "Update Created Book Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Created Book Success', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('createdBookId'));",
+                  "  pm.expect(json.title).to.eql(pm.collectionVariables.get('dynamicBookUpdatedTitle'));",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Broken Inventory\",\n  \"author\": \"Demo Author\",\n  \"status\": \"AVAILABLE\",\n  \"availableCopies\": 0\n}"
+              "raw": "{\n  \"title\": \"{{dynamicBookUpdatedTitle}}\",\n  \"author\": \"Updated Postman Author\",\n  \"status\": \"AVAILABLE\",\n  \"availableCopies\": 2\n}"
             },
-            "url": "{{gatewayUrl}}/books/{{bookId}}"
+            "url": "{{gatewayUrl}}/books/{{createdBookId}}"
           }
         },
         {
-          "name": "DELETE Book Positive",
-          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/books/{{reservedBookId}}" }
-        },
-        {
-          "name": "DELETE Book Negative",
-          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/books/{{missingId}}" }
-        },
-        {
-          "name": "GET All Books Direct Service",
-          "request": { "method": "GET", "url": "{{catalogServiceUrl}}/api/v1/books" }
+          "name": "Update Created Book Bad Request",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Created Book Bad Request', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('Archived books must have zero available copies.');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"{{dynamicBookUpdatedTitle}}\",\n  \"author\": \"Updated Postman Author\",\n  \"status\": \"ARCHIVED\",\n  \"availableCopies\": 1\n}"
+            },
+            "url": "{{gatewayUrl}}/books/{{createdBookId}}"
+          }
         }
       ]
     },
@@ -189,178 +723,704 @@
       "name": "Borrowing Service",
       "item": [
         {
-          "name": "GET All Loans",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/loans" }
+          "name": "Get All Loans Through Gateway",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get All Loans Through Gateway', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.be.an('array');",
+                  "  pm.expect(json.some((loan) => loan.id === pm.collectionVariables.get('seededLoanId'))).to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/loans"
+          }
         },
         {
-          "name": "GET Loan By Id",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/loans/{{loanId}}" }
+          "name": "Get Seeded Loan By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Seeded Loan By Id', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('seededLoanId'));",
+                  "  pm.expect(json.status).to.eql('ACTIVE');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/loans/{{seededLoanId}}"
+          }
         },
         {
-          "name": "GET Missing Loan",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/loans/{{missingId}}" }
+          "name": "Get Missing Loan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Missing Loan', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('missingId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/loans/{{missingId}}"
+          }
         },
         {
-          "name": "POST Loan Positive",
+          "name": "Create Loan Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Loan Success', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.memberId).to.eql(pm.collectionVariables.get('createdMemberId'));",
+                  "  pm.expect(json.bookId).to.eql(pm.collectionVariables.get('createdBookId'));",
+                  "  pm.expect(json.status).to.eql('ACTIVE');",
+                  "  pm.collectionVariables.set('createdLoanId', json.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-04-20\",\n  \"dueDate\": \"2026-04-27\",\n  \"status\": \"ACTIVE\"\n}"
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-05-01\",\n  \"dueDate\": \"2026-05-15\",\n  \"status\": \"ACTIVE\"\n}"
             },
             "url": "{{gatewayUrl}}/loans"
           }
         },
         {
-          "name": "POST Loan Negative",
+          "name": "Create Loan Duplicate Active",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Loan Duplicate Active', function () {",
+                  "  pm.response.to.have.status(409);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('An active loan already exists for this member and book.');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-04-27\",\n  \"dueDate\": \"2026-04-20\",\n  \"status\": \"ACTIVE\"\n}"
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-05-01\",\n  \"dueDate\": \"2026-05-15\",\n  \"status\": \"ACTIVE\"\n}"
             },
             "url": "{{gatewayUrl}}/loans"
           }
         },
         {
-          "name": "PUT Loan Positive",
+          "name": "Create Loan Invalid Dates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Loan Invalid Dates', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('dueDate must be on or after startDate');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-04-01\",\n  \"dueDate\": \"2026-04-10\",\n  \"status\": \"ACTIVE\"\n}"
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-05-20\",\n  \"dueDate\": \"2026-05-10\",\n  \"status\": \"ACTIVE\"\n}"
             },
-            "url": "{{gatewayUrl}}/loans/{{loanId}}"
+            "url": "{{gatewayUrl}}/loans"
           }
         },
         {
-          "name": "PUT Loan Negative",
+          "name": "Update Created Loan Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Created Loan Success', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('createdLoanId'));",
+                  "  pm.expect(json.status).to.eql('RETURNED');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-01-01\",\n  \"dueDate\": \"2026-06-30\",\n  \"status\": \"RETURNED\"\n}"
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-05-01\",\n  \"dueDate\": \"2026-06-15\",\n  \"status\": \"RETURNED\"\n}"
             },
-            "url": "{{gatewayUrl}}/loans/{{loanId}}"
+            "url": "{{gatewayUrl}}/loans/{{createdLoanId}}"
           }
         },
         {
-          "name": "DELETE Loan Positive",
-          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/loans/{{loanId}}" }
+          "name": "Update Created Loan Invalid Window",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Created Loan Invalid Window', function () {",
+                  "  pm.response.to.have.status(422);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('Returned loans must stay within the standard borrowing window.');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-05-01\",\n  \"dueDate\": \"2026-08-05\",\n  \"status\": \"RETURNED\"\n}"
+            },
+            "url": "{{gatewayUrl}}/loans/{{createdLoanId}}"
+          }
         },
         {
-          "name": "DELETE Loan Negative",
-          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/loans/{{missingId}}" }
+          "name": "Delete Missing Loan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Delete Missing Loan', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('missingId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{gatewayUrl}}/loans/{{missingId}}"
+          }
         },
         {
-          "name": "GET All Loans Direct Service",
-          "request": { "method": "GET", "url": "{{borrowingServiceUrl}}/api/v1/loans" }
+          "name": "Delete Created Loan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Delete Created Loan', function () {",
+                  "  pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{gatewayUrl}}/loans/{{createdLoanId}}"
+          }
         }
       ]
     },
     {
-      "name": "Orchestrator",
+      "name": "Library Orchestrator",
       "item": [
         {
-          "name": "GET All Decisions",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/borrowing-decisions" }
+          "name": "Get All Decisions Through Gateway",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get All Decisions Through Gateway', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json).to.have.property('_links');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/borrowing-decisions"
+          }
         },
         {
-          "name": "GET Decision By Id",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/borrowing-decisions/{{decisionId}}" }
+          "name": "Get Seeded Decision By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Seeded Decision By Id', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('seededDecisionId'));",
+                  "  pm.expect(json.status).to.eql('APPROVED');",
+                  "  pm.expect(json.loanId).to.eql(pm.collectionVariables.get('seededLoanId'));",
+                  "  pm.expect(json._links).to.have.property('member');",
+                  "  pm.expect(json._links).to.have.property('book');",
+                  "  pm.expect(json._links).to.have.property('loan');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/borrowing-decisions/{{seededDecisionId}}"
+          }
         },
         {
-          "name": "GET Missing Decision",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/borrowing-decisions/{{missingId}}" }
+          "name": "Get Orchestrator Linked Member",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Orchestrator Linked Member', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('activeMemberId'));",
+                  "  pm.expect(json.status).to.eql('ACTIVE');",
+                  "  pm.expect(json._links).to.have.property('decisions');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/borrowing-decisions/members/{{activeMemberId}}"
+          }
         },
         {
-          "name": "POST Decision Positive",
+          "name": "Get Orchestrator Linked Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Orchestrator Linked Book', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('availableBookId'));",
+                  "  pm.expect(json.status).to.eql('AVAILABLE');",
+                  "  pm.expect(json._links).to.have.property('decisions');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/borrowing-decisions/books/{{availableBookId}}"
+          }
+        },
+        {
+          "name": "Get Orchestrator Linked Loan",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Orchestrator Linked Loan', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('seededLoanId'));",
+                  "  pm.expect(json.status).to.eql('ACTIVE');",
+                  "  pm.expect(json._links).to.have.property('decisions');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/borrowing-decisions/loans/{{seededLoanId}}"
+          }
+        },
+        {
+          "name": "Get Missing Decision",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Get Missing Decision', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('missingId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{gatewayUrl}}/borrowing-decisions/{{missingId}}"
+          }
+        },
+        {
+          "name": "Create Decision Approved",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Decision Approved', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('APPROVED');",
+                  "  pm.expect(json.memberId).to.eql(pm.collectionVariables.get('createdMemberId'));",
+                  "  pm.expect(json.bookId).to.eql(pm.collectionVariables.get('createdBookId'));",
+                  "  pm.expect(json.loanId).to.be.a('string');",
+                  "  pm.collectionVariables.set('createdDecisionId', json.id);",
+                  "  pm.collectionVariables.set('createdDecisionLoanId', json.loanId);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-04-20\",\n  \"dueDate\": \"2026-04-27\"\n}"
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-07-01\",\n  \"dueDate\": \"2026-07-15\"\n}"
             },
             "url": "{{gatewayUrl}}/borrowing-decisions"
           }
         },
         {
-          "name": "POST Decision Negative",
+          "name": "Create Decision Rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Decision Rejected', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.status).to.eql('REJECTED');",
+                  "  pm.expect(json.decisionReason).to.eql('Member is not active.');",
+                  "  pm.expect(json.loanId).to.eql(null);",
+                  "  pm.collectionVariables.set('rejectedDecisionId', json.id);",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{suspendedMemberId}}\",\n  \"bookId\": \"{{reservedBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-04-20\",\n  \"dueDate\": \"2026-04-27\"\n}"
+              "raw": "{\n  \"memberId\": \"{{suspendedMemberId}}\",\n  \"bookId\": \"{{reservedBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-07-01\",\n  \"dueDate\": \"2026-07-15\"\n}"
             },
             "url": "{{gatewayUrl}}/borrowing-decisions"
           }
         },
         {
-          "name": "PUT Decision Positive",
+          "name": "Create Decision Invalid Dates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Create Decision Invalid Dates', function () {",
+                  "  pm.response.to.have.status(409);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('dueDate must be on or after startDate');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-04-21\",\n  \"dueDate\": \"2026-04-28\"\n}"
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-07-20\",\n  \"dueDate\": \"2026-07-10\"\n}"
             },
-            "url": "{{gatewayUrl}}/borrowing-decisions/{{decisionId}}"
+            "url": "{{gatewayUrl}}/borrowing-decisions"
           }
         },
         {
-          "name": "PUT Decision Negative",
+          "name": "Update Decision Quantity Too High",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Decision Quantity Too High', function () {",
+                  "  pm.response.to.have.status(422);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.eql('Requested quantity exceeds available copies.');",
+                  "});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"memberId\": \"{{memberId}}\",\n  \"bookId\": \"{{bookId}}\",\n  \"quantity\": 10,\n  \"startDate\": \"2026-04-28\",\n  \"dueDate\": \"2026-04-20\"\n}"
+              "raw": "{\n  \"memberId\": \"{{createdMemberId}}\",\n  \"bookId\": \"{{createdBookId}}\",\n  \"quantity\": 99,\n  \"startDate\": \"2026-07-01\",\n  \"dueDate\": \"2026-07-15\"\n}"
             },
-            "url": "{{gatewayUrl}}/borrowing-decisions/{{decisionId}}"
+            "url": "{{gatewayUrl}}/borrowing-decisions/{{createdDecisionId}}"
           }
         },
         {
-          "name": "DELETE Decision Positive",
-          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/borrowing-decisions/{{decisionId}}" }
+          "name": "Update Decision To Rejected",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Update Decision To Rejected', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.id).to.eql(pm.collectionVariables.get('createdDecisionId'));",
+                  "  pm.expect(json.status).to.eql('REJECTED');",
+                  "  pm.expect(json.loanId).to.eql(null);",
+                  "  pm.expect(json.decisionReason).to.eql('Member is not active.');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"memberId\": \"{{suspendedMemberId}}\",\n  \"bookId\": \"{{reservedBookId}}\",\n  \"quantity\": 1,\n  \"startDate\": \"2026-07-01\",\n  \"dueDate\": \"2026-07-15\"\n}"
+            },
+            "url": "{{gatewayUrl}}/borrowing-decisions/{{createdDecisionId}}"
+          }
         },
         {
-          "name": "DELETE Decision Negative",
-          "request": { "method": "DELETE", "url": "{{gatewayUrl}}/borrowing-decisions/{{missingId}}" }
+          "name": "Delete Updated Decision",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Delete Updated Decision', function () {",
+                  "  pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{gatewayUrl}}/borrowing-decisions/{{createdDecisionId}}"
+          }
         },
         {
-          "name": "GET Related Member Through Orchestrator",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/borrowing-decisions/members/{{memberId}}" }
+          "name": "Delete Rejected Decision",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Delete Rejected Decision', function () {",
+                  "  pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{gatewayUrl}}/borrowing-decisions/{{rejectedDecisionId}}"
+          }
+        },
+        {
+          "name": "Delete Missing Decision",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Delete Missing Decision', function () {",
+                  "  pm.response.to.have.status(404);",
+                  "  const json = pm.response.json();",
+                  "  pm.expect(json.message).to.include(pm.collectionVariables.get('missingId'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{gatewayUrl}}/borrowing-decisions/{{missingId}}"
+          }
         }
       ]
     },
     {
-      "name": "Swagger",
+      "name": "Cleanup",
       "item": [
         {
-          "name": "Gateway Swagger UI",
-          "request": { "method": "GET", "url": "{{gatewayUrl}}/swagger-ui.html" }
+          "name": "Delete Created Member",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Delete Created Member', function () {",
+                  "  pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{gatewayUrl}}/members/{{createdMemberId}}"
+          }
         },
         {
-          "name": "Member Swagger UI",
-          "request": { "method": "GET", "url": "{{memberServiceUrl}}/swagger-ui.html" }
-        },
-        {
-          "name": "Catalog Swagger UI",
-          "request": { "method": "GET", "url": "{{catalogServiceUrl}}/swagger-ui.html" }
-        },
-        {
-          "name": "Borrowing Swagger UI",
-          "request": { "method": "GET", "url": "{{borrowingServiceUrl}}/swagger-ui.html" }
-        },
-        {
-          "name": "Orchestrator Swagger UI",
-          "request": { "method": "GET", "url": "{{orchestratorUrl}}/swagger-ui.html" }
+          "name": "Delete Created Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Expected result: Delete Created Book', function () {",
+                  "  pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "url": "{{gatewayUrl}}/books/{{createdBookId}}"
+          }
         }
       ]
     }
