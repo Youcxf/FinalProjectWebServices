@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: member-service
+  profiles:
+    default: h2
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+server:
+  port: 8081
+  error:
+    include-message: always

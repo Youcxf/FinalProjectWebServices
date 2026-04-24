@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: member-service-root
+              uri: ${services.member-service.url}
+              predicates:
+                - Path=/members
+              filters:
+                - SetPath=/api/v1/members
+            - id: member-service-nested
+              uri: ${services.member-service.url}
+              predicates:
+                - Path=/members/**
+              filters:
+                - RewritePath=/members/(?<segment>.*), /api/v1/members/$\{segment}
+            - id: catalog-service-root
+              uri: ${services.catalog-service.url}
+              predicates:
+                - Path=/books
+              filters:
+                - SetPath=/api/v1/books
+            - id: catalog-service-nested
+              uri: ${services.catalog-service.url}
+              predicates:
+                - Path=/books/**
+              filters:
+                - RewritePath=/books/(?<segment>.*), /api/v1/books/$\{segment}
+            - id: borrowing-service-root
+              uri: ${services.borrowing-service.url}
+              predicates:
+                - Path=/loans
+              filters:
+                - SetPath=/api/v1/loans
+            - id: borrowing-service-nested
+              uri: ${services.borrowing-service.url}
+              predicates:
+                - Path=/loans/**
+              filters:
+                - RewritePath=/loans/(?<segment>.*), /api/v1/loans/$\{segment}
+            - id: library-orchestrator-root
+              uri: ${services.orchestrator.url}
+              predicates:
+                - Path=/borrowing-decisions
+              filters:
+                - SetPath=/api/v1/borrowing-decisions
+            - id: library-orchestrator-nested
+              uri: ${services.orchestrator.url}
+              predicates:
+                - Path=/borrowing-decisions/**
+              filters:
+                - RewritePath=/borrowing-decisions/(?<segment>.*), /api/v1/borrowing-decisions/$\{segment}
+
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+services:
+  member-service:
+    url: ${MEMBER_SERVICE_URL:http://localhost:8081}
+  catalog-service:
+    url: ${CATALOG_SERVICE_URL:http://localhost:8082}
+  borrowing-service:
+    url: ${BORROWING_SERVICE_URL:http://localhost:8083}
+  orchestrator:
+    url: ${LIBRARY_ORCHESTRATOR_URL:http://localhost:8084}

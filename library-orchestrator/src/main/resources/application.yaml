@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: library-orchestrator
+  profiles:
+    default: h2
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8084
+  error:
+    include-message: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+clients:
+  member-service:
+    base-url: ${MEMBER_SERVICE_URL:http://localhost:8081}
+  catalog-service:
+    base-url: ${CATALOG_SERVICE_URL:http://localhost:8082}
+  borrowing-service:
+    base-url: ${BORROWING_SERVICE_URL:http://localhost:8083}
