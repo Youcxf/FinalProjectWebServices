@@ -6,7 +6,7 @@
 build
 **/build
 **/.gradle
-**/out
+/out
 src
 docs
 Project__Microservices_Milestone__Part_1.pdf

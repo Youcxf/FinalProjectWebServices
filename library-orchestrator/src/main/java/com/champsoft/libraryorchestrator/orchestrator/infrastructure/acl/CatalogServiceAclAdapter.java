@@ -6,29 +6,28 @@ import com.champsoft.libraryorchestrator.orchestrator.application.port.out.BookC
 import com.champsoft.libraryorchestrator.orchestrator.application.port.out.model.BookSnapshot;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClient;
 
 import java.util.UUID;
 
 @Component
 public class CatalogServiceAclAdapter implements BookCatalogPort {
 
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public CatalogServiceAclAdapter(@Qualifier("catalogWebClient") WebClient webClient) {
-        this.webClient = webClient;
+    public CatalogServiceAclAdapter(@Qualifier("catalogRestClient") RestClient restClient) {
+        this.restClient = restClient;
     }
 
     @Override
     public BookSnapshot getBook(UUID bookId) {
         try {
-            return webClient.get()
+            return restClient.get()
                     .uri("/api/v1/books/{bookId}", bookId)
                     .retrieve()
-                    .bodyToMono(BookSnapshot.class)
-                    .block();
-        } catch (WebClientResponseException exception) {
+                    .body(BookSnapshot.class);
+        } catch (HttpStatusCodeException exception) {
             if (exception.getStatusCode().value() == 404) {
                 throw new DownstreamResourceNotFoundApplicationException("Book", bookId);
             }

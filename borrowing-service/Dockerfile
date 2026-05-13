@@ -1,5 +1,10 @@
+FROM gradle:8.10.2-jdk21 AS builder
+WORKDIR /workspace
+COPY --chown=gradle:gradle . .
+RUN gradle :borrowing-service:bootJar --no-daemon -x test
+
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY borrowing-service/build/libs/*.jar app.jar
+COPY --from=builder /workspace/borrowing-service/build/libs/*.jar app.jar
 EXPOSE 8083
 ENTRYPOINT ["java", "-jar", "app.jar"]

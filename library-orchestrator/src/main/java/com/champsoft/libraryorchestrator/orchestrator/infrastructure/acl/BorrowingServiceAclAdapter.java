@@ -7,8 +7,8 @@ import com.champsoft.libraryorchestrator.orchestrator.application.port.out.model
 import com.champsoft.libraryorchestrator.orchestrator.application.port.out.model.LoanSnapshot;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClient;
 
 import java.util.Map;
 import java.util.UUID;
@@ -16,21 +16,20 @@ import java.util.UUID;
 @Component
 public class BorrowingServiceAclAdapter implements LoanManagementPort {
 
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public BorrowingServiceAclAdapter(@Qualifier("borrowingWebClient") WebClient webClient) {
-        this.webClient = webClient;
+    public BorrowingServiceAclAdapter(@Qualifier("borrowingRestClient") RestClient restClient) {
+        this.restClient = restClient;
     }
 
     @Override
     public LoanSnapshot getLoan(UUID loanId) {
         try {
-            return webClient.get()
+            return restClient.get()
                     .uri("/api/v1/loans/{loanId}", loanId)
                     .retrieve()
-                    .bodyToMono(LoanSnapshot.class)
-                    .block();
-        } catch (WebClientResponseException exception) {
+                    .body(LoanSnapshot.class);
+        } catch (HttpStatusCodeException exception) {
             if (exception.getStatusCode().value() == 404) {
                 throw new DownstreamResourceNotFoundApplicationException("Loan", loanId);
             }
@@ -41,13 +40,12 @@ public class BorrowingServiceAclAdapter implements LoanManagementPort {
     @Override
     public LoanSnapshot createLoan(CreateLoanCommand command) {
         try {
-            return webClient.post()
+            return restClient.post()
                     .uri("/api/v1/loans")
-                    .bodyValue(toBody(command))
+                    .body(toBody(command))
                     .retrieve()
-                    .bodyToMono(LoanSnapshot.class)
-                    .block();
-        } catch (WebClientResponseException exception) {
+                    .body(LoanSnapshot.class);
+        } catch (HttpStatusCodeException exception) {
             throw new DownstreamDependencyException("Borrowing service error: " + exception.getStatusCode());
         }
     }
@@ -55,13 +53,12 @@ public class BorrowingServiceAclAdapter implements LoanManagementPort {
     @Override
     public LoanSnapshot updateLoan(UUID loanId, CreateLoanCommand command) {
         try {
-            return webClient.put()
+            return restClient.put()
                     .uri("/api/v1/loans/{loanId}", loanId)
-                    .bodyValue(toBody(command))
+                    .body(toBody(command))
                     .retrieve()
-                    .bodyToMono(LoanSnapshot.class)
-                    .block();
-        } catch (WebClientResponseException exception) {
+                    .body(LoanSnapshot.class);
+        } catch (HttpStatusCodeException exception) {
             if (exception.getStatusCode().value() == 404) {
                 throw new DownstreamResourceNotFoundApplicationException("Loan", loanId);
             }
@@ -72,12 +69,11 @@ public class BorrowingServiceAclAdapter implements LoanManagementPort {
     @Override
     public void deleteLoan(UUID loanId) {
         try {
-            webClient.delete()
+            restClient.delete()
                     .uri("/api/v1/loans/{loanId}", loanId)
                     .retrieve()
-                    .toBodilessEntity()
-                    .block();
-        } catch (WebClientResponseException exception) {
+                    .toBodilessEntity();
+        } catch (HttpStatusCodeException exception) {
             if (exception.getStatusCode().value() == 404) {
                 throw new DownstreamResourceNotFoundApplicationException("Loan", loanId);
             }
