@@ -1,0 +1,13 @@
+server:
+  port: 0
+
+services:
+  member-service:
+    url: http://localhost:8081
+  catalog-service:
+    url: http://localhost:8082
+  borrowing-service:
+    url: http://localhost:8083
+  orchestrator:
+    url: http://localhost:8084
+
